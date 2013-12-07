@@ -1,0 +1,18 @@
+{
+  "name": "my-socket-io-sample",
+  "version": "0.0.0",
+  "description": "my-socket-io-sample ===================",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mori-dev/my-socket-io-sample.git"
+  },
+  "author": "",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/mori-dev/my-socket-io-sample/issues"
+  }
+}
