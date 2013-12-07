@@ -14,5 +14,13 @@
   "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/mori-dev/my-socket-io-sample/issues"
+  },
+  "dependencies": {
+    "socket.io": "~0.9.16",
+    "connect": "~2.11.2",
+    "express": "~3.4.6",
+    "ejs": "~0.8.5",
+    "mocha": "~1.15.1",
+    "underscore": "~1.5.2"
   }
 }
