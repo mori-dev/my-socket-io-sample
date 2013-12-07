@@ -1,5 +1,11 @@
 # my-socket-io-sample
 
+## [TAG:SimpleHttpServer](https://github.com/mori-dev/my-socket-io-sample/tree/SimpleHttpServer)
+
+* server.listen() を加えると、ハンドルの登録が行われイベントループが維持される
+* [node.js のハンドルとは何かのメモ - わからん](http://d.hatena.ne.jp/kitokitoki/20131130/p2)
+* (Node では 1箇所でも重い処理(CPU ヘビーな処理)があると、全体のパフォーマンスが低下してしまう)
+
 ## [TAG:SipmleRoutingApplication](https://github.com/mori-dev/my-socket-io-sample/tree/SipmleRoutingApplication)
 
 * path モジュールの basename メソッドを使って、request オブジェクトに格納されたリクエスト URL から basename を抽出します。
