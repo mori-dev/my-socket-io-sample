@@ -24,3 +24,4 @@ _.each {one : 1, two : 2, three : 3}, (num, key) -> show num
 ## 参考資料、引用資料
 
 * [Nodeクックブック](http://www.oreilly.co.jp/books/9784873116068/)
+* [サーバサイドJavaScript Node.js入門](http://ascii.asciimw.jp/books/books/detail/978-4-04-870367-3.shtml)
