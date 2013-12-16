@@ -1,0 +1,32 @@
+<html>
+<head></head>
+<body>
+<input id="message" type="text"><button id="send">送信する</button>
+<div id="output"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+(function () {
+    var socket = io.connect('ws://localhost:8081');
+    var output = document.getElementById('output');
+    var send = document.getElementById('send');
+
+    function logStr(eventStr, msg) {
+        return '<div>' + eventStr + '：' + msg + '</div>';
+    }
+
+    socket.on('connect', function () {
+        send.addEventListener('click', function () {
+            var msg = document.getElementById('message').value;
+            socket.send(msg);
+            output.innerHTML += logStr('送信', msg);
+        });
+
+        socket.on('message', function (msg) {
+            output.innerHTML += logStr('受信', msg);
+        });
+    });
+}());
+</script>
+</body>
+</html>

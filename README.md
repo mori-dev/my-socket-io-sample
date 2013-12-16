@@ -21,7 +21,7 @@ _.each {one : 1, two : 2, three : 3}, (num, key) -> show num
 * [アンスコJSの _.result は、関数だったら実行して、変数だったらそのまま返す関数 - わからん](http://d.hatena.ne.jp/kitokitoki/20131207/p2)
 * [forEach のコールバックはループの実行中はブロックされている - わからん](http://d.hatena.ne.jp/kitokitoki/20131124/p1)
 
-## [TAG:SipmleStreamingApplication](https://github.com/mori-dev/my-socket-io-sample/tree/SipmleStreamingApplication)
+## [TAG:SipmleStreamingApplication](https://github.com/mori-dev/my-socket-io-sample/tree/SimpleStreamApplication)
 
 * fs.createReadStream でストリームを開始、そのストリームを response オブジェクトに pipe で送ります
 * stream.pipe はストリームが終了すると自動的に response.end を呼び出します。だから、end を書いていません
@@ -55,6 +55,17 @@ stream = fs.createReadStream(file).once 'open', ->
 * 出力ストリーム(Writable Stream)は、drain、end、close、error イベントを発生します。
 * drain イベントは書き込み再開できるようになったときに発生します。
 * pipe イベントは出力ストリームが入力ストリームの pipe() に渡されると発生します。
+
+## [TAG:SimpleSocketIOApplication](https://github.com/mori-dev/my-socket-io-sample/tree/SimpleSocketIOApplication)
+
+* クライアント用の socket.io.js がブラウザに読み込まれると、io というグローバルオブジェクトが生成されます。
+* io.connect メソッドにサーバのアドレスを渡して呼ぶことにより、socket オブジェクトを取得します。
+* socket.io は、message や connect、disconnect など、あらかじめ設定されているイベントの他に、emit メソッドを用いてカスタムイベントを発生させることができます。
+* クライアントでも、emit でカスタムイベントを発生させることができます。
+* クライアントで io.connect('ws://localhost:8080/ ネームスペース '); とし、サーバーで io.of('/ネームスペース') とすれば、ネームスペースが利用できます。
+* io.connect を複数回呼び出して、複数の WebSocket ネームスペースを作成しても、複数の WebSocket 接続を生成するわけではありません。socket.io は 1 つの接続を複数の目的のために利用し(もしくは、複数の接続を 1 つに統合し)、ネームスペースのロジックをサーバで処理します。複数の接続を発生させるより、負担の少ないです。
+* ネームスペースを使用することにより、複数の種類のタスクを 1 つの socket.io 接続で処理することができます。
+* WebSocket の仕様には、サブプロトコルというネームスペースに似た考え方があります。特定の機能・動作を特定のネームスペースに限定することによってコードが読みやすくなります。
 
 ## 参考資料、引用資料
 
