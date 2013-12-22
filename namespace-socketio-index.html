@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="coffee-script.js"></script>
+    <script src="namespace-socketio-client.coffee" type="text/coffeescript"></script>
+    <style>
+        #form, #raw {display:block; float:left; width:320px;}
+        #raw {height:300px; width:320px; margin-left:0.5em;}
+    </style>
+</head>
+<body>
+<form id="form">
+    プロフィール：<select id="profiles">
+    <option></option>
+    </select>
+    <br>
+    フォーマット：<select id="formats">
+    <option value="json">JSON</option>
+    <option value="xml">XML</option>
+    </select>
+    <br>
+    <br>
+    <div id="output"></div>
+</form>
+<textarea id="raw"></textarea>
+
+</body>
+</html>

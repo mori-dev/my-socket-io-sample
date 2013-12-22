@@ -62,10 +62,35 @@ stream = fs.createReadStream(file).once 'open', ->
 * io.connect メソッドにサーバのアドレスを渡して呼ぶことにより、socket オブジェクトを取得します。
 * socket.io は、message や connect、disconnect など、あらかじめ設定されているイベントの他に、emit メソッドを用いてカスタムイベントを発生させることができます。
 * クライアントでも、emit でカスタムイベントを発生させることができます。
-* クライアントで io.connect('ws://localhost:8080/ ネームスペース '); とし、サーバーで io.of('/ネームスペース') とすれば、ネームスペースが利用できます。
+
+## [TAG:NamespaceSocketIOApplication](https://github.com/mori-dev/my-socket-io-sample/tree/NamespaceSocketIOApplication)
+
+* クライアントで io.connect('ws://localhost:8080/ネームスペース '); とし、サーバーで io.of('/ネームスペース') とすれば、ネームスペースが利用できます。
 * io.connect を複数回呼び出して、複数の WebSocket ネームスペースを作成しても、複数の WebSocket 接続を生成するわけではありません。socket.io は 1 つの接続を複数の目的のために利用し(もしくは、複数の接続を 1 つに統合し)、ネームスペースのロジックをサーバで処理します。複数の接続を発生させるより、負担の少ないです。
 * ネームスペースを使用することにより、複数の種類のタスクを 1 つの socket.io 接続で処理することができます。
 * WebSocket の仕様には、サブプロトコルというネームスペースに似た考え方があります。特定の機能・動作を特定のネームスペースに限定することによってコードが読みやすくなります。
+
+* このアプリのサーバ仕様: ブラウザからのリクエストを受けると、レスポンスとしてシリアル化されたデータをブラウザに返す
+* このアプリのクライアント仕様: リクエストで指定したメンバーのプロフィールを JSON もしくは XML 形式で受け取って、そのプロフィールをブラウザで表示できるプロフィールビューワ
+* URL のルートは 2 つ用意しておきます。1 つはプロフィールの名前リストを返すルート(profiles)、もう 1 つは指定された人のプロフィールを返すルート(/profile)です。
+* 'http://localhost:8081/foo' を $.get するなど、Ajax を使っていた箇所を 'ws://localhost:8081/json' で WebSocket で処理するように変更してみる、という内容でした。WebSocket 接続を開始すると connect イベントが発生し、イベントを受け取ったクライアント
+は profiles イベントを発行します。profiles イベントを受信したサーバは、プロフィールのキー(名前)のリストをクライアントに送信します。名前のリストを受け取って処理したクライアントは、select 要素が変更されると、カスタム profile イベントを適切なネームスペースに発信します。それぞれのネームスペースのソケットはサーバからの profile イベントを待ち、受信するとそのネームスペース(フォーマット)に応じて処理を行います。
+* サーバで fs.readFileSync('index.html'); すれば、同一生成元ポリシーの適用が回避されます。
+* foo.coffee を HTML で読み込むには、
+
+```.html
+//<script src='http://jashkenas.github.com/coffee-script/extras/coffee-script.js' type='text/javascript'></script>
+<script src="coffee-script.js"></script>
+```
+
+しておいて、以下のように書きます。
+
+```
+<script src="foo.coffee" type="text/coffeescript"></script>
+```
+
+* fs.readFileSync 'ここのHTML' で JS や CSS を読み込んでいる場合は、res.writeHead 200, 'text/javascript' などをつけて、その JS や CSS も配信する必要があります。
+
 
 ## 参考資料、引用資料
 
