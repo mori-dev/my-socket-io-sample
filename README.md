@@ -92,6 +92,49 @@ stream = fs.createReadStream(file).once 'open', ->
 * fs.readFileSync 'ここのHTML' で JS や CSS を読み込んでいる場合は、res.writeHead 200, 'text/javascript' などをつけて、その JS や CSS も配信する必要があります。
 
 
+
+## [TAG:Counter](https://github.com/mori-dev/my-socket-io-sample/tree/Counter)
+
+### Buffer について
+
+* Buffer は Node が提供する固定長のバイナリデータを扱うためのクラス。
+* Buffer はバイナリファイルの読み書きに加え、ストリームのバイナリデータ読み書きの際によく使われており、
+  ファイル、ネットワークを流れるバイナリを扱うときなどに利用されます。
+* Buffer オブジェクトの作成の際にはサイズを引数に指定する方法とオブジェクトを直接引数に指定する方法があります。
+
+```.javascript
+    var buf = new Buffer(16);                   //サイズを指定
+    var arrayBuf = new Buffer([1,2,3,4,5,6]);   //オブジェクトを直接引数に指定
+    var stringBuf = new Buffer("sample");       //オブジェクトを直接引数に指定
+    console.log(buf);       //=> <Buffer 01 00 00 00 00 00 00 00 10 30 65 00 01 00 00 00>
+    console.log(arrayBuf);  //=> <Buffer 01 02 03 04 05 06>
+    console.log(stringBuf); //=> <Buffer 73 61 6d 70 6c 65>
+```
+
+### widget_server.js
+
+* 課題: socket.io でリモートサーバ接続者の数をリアルタイムで更新するウィジェットを作成する。hotnode server.js, hotnode widget-server.js で起動する。
+  * index.html:       widget_client.js のトリガー。カウンタの表示。http://localhost:8081/loc/widget.js を読み込んでいる。これは、widget_server.js が配信する、widget_client.js の加工版。
+  * widget_client.js: ウィジェット。
+  * server.js:        index.html を配信する HTTP サーバ。8082 ポート
+  * widget_server.js: ウィジェットサーバ。ウィジェットを通してクライアントが接続するサーバ。8081ポート。
+
+* ws://localhost:8081 は、ウィジェットを通してクライアントが接続するサーバです。
+* socket.io-client ライブラリは、widget_client.js をカスタマイズして生成するのに使っています
+* widget_client.js をカスタマイズして生成するのに、socket.io-client の builder メソッドを使います
+* socket.io-client の builder メソッドの最初の引数は io.transports() で、WebSocket や xhr ポーリングなど、リアルタイム通信を実現するさまざまな手段の配列です。配列の先頭に近いほど優先度が高い手段です。listen メソッドでオプションを設定していないため、メソッドの戻り値はデフォルトの配列です。websocket、htmlfile、xhr-polling、jsonp-polling の順です。
+* builder メソッドの 2つ目の引数はコールバック関数です。siojs パラメータに socket.io.js の内容が渡されるので、これをコールバック内で使うことができます。
+* io.static.add メソッドで、siojs の内容が widget_client.js の内容とつなげられて、両方の JavaScript コンテンツを含んだ 1 つのファイル(widget.js)が生成されます。これらのスクリプトがお互いに影響しないよう、間にセミコロンをはさみます。繰り返しになりますが、サーバ側で socket.io-client を require して、io.static.add で socket.io.js の内容に追記しています。
+* socket.io は、クライアント用 JavaScript ファイルを配信するための HTTP サーバを内部に持っています。HTTP サーバを新たに生成する代わりに、io.static.add メソッドを使って socket.ioの内部 HTTP サーバに新しい URL ルートを設定します。io.static.add の 2 つ目のパラメータにはコールバック関数が渡されます。このコールバック関数は、追加された URL ルートで配信するコンテンツを設定します。
+* 最初の引数は物理ファイルを参照しますが、今回は動的にコードを生成するので null を渡します。2 つ目のパラメータは、(widget.js として配信される)siojs と widgetScript のコンテンツをつなげた内容を Buffer に入れて渡しています。これで /widget.js ルートが設定されました。
+* io.configure で resource プロパティを変更すると、socket.io が生成する内部 HTTP サーバのルートディレクトリを変更することができます。ここではスクリプトファイルへのアクセスを、デフォルトの http://localhost:8081/socket.io/widget.js ではなく、ウィジェットの名前(LOC)をパスに含んだ http://localhost:8081/loc/widget.js でできるように、resource プロパティの値を設定しています。
+* socket.handshake.xdomain は、ハンドシェイクが同じサーバと確立されたかどうかを示します。
+
+### サイトごとの訪問者カウント数を Redis に保存
+
+* totals[origin] に 1 を加える代わりに、Redis の INCR コマンド(totals.incr メソッド)で origin の文字列がキーとなる値をインクリメントします。
+
+
 ## 参考資料、引用資料
 
 * [Nodeクックブック](http://www.oreilly.co.jp/books/9784873116068/)
